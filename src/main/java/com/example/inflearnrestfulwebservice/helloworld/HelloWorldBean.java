@@ -1,4 +1,4 @@
-package com.example.inflearnrestfulwebservice;
+package com.example.inflearnrestfulwebservice.helloworld;
 // lombok
 
 import lombok.AllArgsConstructor;
