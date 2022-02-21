@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         User savedUser = service.save(user);
 
         // 응답코드값 제어
@@ -52,5 +53,21 @@ public class UserController {
         if (user == null) {
             throw new UserNotFoundException(String.format("ID[%s] not found", id));
         }
+    }
+
+    @PutMapping("/users")
+    public ResponseEntity<User> editUser(@Valid @RequestBody User newUser) {
+        User editedUser = service.editById(newUser);
+        if (editedUser == null) {
+            throw new UserNotFoundException(String.format("ID[%s] not found", newUser.getId()));
+        }
+
+        // 응답코드값 제어
+        final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}") // 가변 변수
+                .buildAndExpand(editedUser.getId()) // 대입
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 }
